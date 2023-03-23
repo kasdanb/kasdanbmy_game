@@ -11,8 +11,9 @@ from random import randint
 # player class
 
 class Player(Sprite):
-    def __init__(self):
+    def __init__(self, game):
         Sprite.__init__(self)
+        self.game = game 
         # these are the properties
         self.image = pg.Surface((50,50))
         self.image.fill(BLACK)
