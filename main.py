@@ -1,4 +1,4 @@
-# Created By Kasdan blattman
+# File created by: Chris Cozort
 # Agenda:
 # gIT GITHUB    
 # Build file and folder structures
@@ -6,41 +6,62 @@
 # testing github changes
 # I changed something - I changed something else tooooo!
 
+# This file was created by: Chris Cozort
+# Sources: http://kidscancode.org/blog/2016/08/pygame_1-1_getting-started/
+# Sources: 
+
 # import libs
 import pygame as pg
-import random
 import os
 # import settings 
 from settings import *
 from sprites import *
 # from pg.sprite import Sprite
 
-#set up asset folders
+# set up assets folders
 game_folder = os.path.dirname(__file__)
-img_folder = os.path.join(game_folder)
+img_folder = os.path.join(game_folder, "img")
 
+# create game class in order to pass properties to the sprites file
 
-#create game class in order to pass properties to the sprites file
 class Game:
     def __init__(self):
-        #init game window etc.
+        # init game window etc.
         pg.init()
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         pg.display.set_caption("my game")
         self.clock = pg.time.Clock()
         self.running = True
-
+        print(self.screen)
     def new(self):
-        #starting a new game
+        # starting a new game
         self.score = 0
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
-        self.player = Player()
-        self.all_sprites.add(Player)
+        self.player = Player(self)
+        self.plat1 = Platform(WIDTH, 50, 0, HEIGHT-50, (150,150,150), "normal")
+        self.plat2 = Platform(50, 25, 200, 400, (150,150,150), "normal")
+        self.plat3 = Platform(175, 25, 350, 200, (150,150,150), "normal")
+        self.plat4 = Platform(325, 25, 100, 300, (150,150,150), "normal")
+        self.plat5 = Platform(500, 25, 225, 350, (150,150,150), "normal")
+        # self.plat1 = Platform(WIDTH, 50, 0, HEIGHT-50, (150,150,150), "normal")
+        self.all_sprites.add(self.plat1)
+        self.all_sprites.add(self.plat2)
+        self.all_sprites.add(self.plat3)
+        self.all_sprites.add(self.plat4)
+        self.all_sprites.add(self.plat5)
+
+        self.platforms.add(self.plat1)
+        self.platforms.add(self.plat2)
+        self.platforms.add(self.plat3)
+        self.platforms.add(self.plat4)
+        self.platforms.add(self.plat5)
+        
+        self.all_sprites.add(self.player)
         for i in range(0,10):
-            m = Mob(20,20,(0,255,))
+            m = Mob(20,20,(0,255,0))
             self.all_sprites.add(m)
             self.enemies.add(m)
         self.run()
@@ -51,118 +72,55 @@ class Game:
             self.events()
             self.update()
             self.draw()
+    
     def events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 if self.playing:
                     self.playing = False
                 self.running = False
-            if event.type ==pg.KEYDOWN:
-                if event.key ==pg.K_SPACE:
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE:
                     self.player.jump()
     def update(self):
+        self.all_sprites.update()
+        if self.player.vel.y > 0:
+            hits = pg.sprite.spritecollide(self.player, self.platforms, False)
+            if hits:
+                if hits[0].variant == "dissapearing":
+                    hits[0].kill()
+                elif hits[0].variant == "icey":
+                    self.player.pos.y = hits[0].rect.top
+                    self.player.vel.y = 0
+                    PLAYER_FRICTION = 0
+                elif hits[0].variant == "bouncey":
+                    self.player.pos.y = hits[0].rect.top
+                    self.player.vel.y = -PLAYER_JUMP
+                else:
+                    self.player.pos.y = hits[0].rect.top
+                    self.player.vel.y = 0
+
     def draw(self):
-    def draw_text(text, size, color, x, y):
+        self.screen.fill(BLUE)
+        self.all_sprites.draw(self.screen)
+        # is this a method or a function?
+        pg.display.flip()
+    def draw_text(self, text, size, color, x, y):
         font_name = pg.font.match_font('arial')
         font = pg.font.Font(font_name, size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
         text_rect.midtop = (x,y)
-        screen.blit(text_surface, text_rect)
-    def get_mouse_now():
+        self.screen.blit(text_surface, text_rect)
+    def get_mouse_now(self):
         x,y = pg.mouse.get_pos()
         return (x,y)
-    
 
+# instantiate the game class...
 g = Game()
 
-While g.running:
+# kick off the game loop
+while g.running:
     g.new()
 
-pg.quit()
-    
-
-
-
- 
-# set up assets folders
-game_folder = os.path.dirname(__file__)
-img_folder = os.path.join(game_folder, "img")
-# 
-
-
-def get_mouse_now():
-    x,y = pg.mouse.get_pos()
-    return (x,y)
-
-# init pg and create window
-pg.init()
-# init sound mixer
-pg.mixer.init()
-screen = pg.display.set_mode((WIDTH, HEIGHT))
-pg.display.set_caption("My first game...")
-clock = pg.time.Clock() 
-
-# i have a group of sprites, allows you to update all sprites at the same time
-all_sprites = pg.sprite.Group()
-enemies = pg.sprite.Group()
-
-player = Player()
-
-all_sprites.add(player)
-player.pos = (0,0)
-
-# creates a for loop that creates 20 mobs
-# 
-for i in range(0,20):
-    # instantiate mobs
-    m = Mob(randint(30,90), randint(30, 90), (255,0,0))
-    # add enemies to enemies and all_sprites...
-    enemies.add(m)
-    all_sprites.add(m)
-
-print(enemies)
-# game loop
-
-
-
-while RUNNING:
-    #  keep loop running at the right speed
-    clock.tick(FPS)
-    ### process input events section of game loop
-    for event in pg.event.get():
-        # check for window closing
-        if event.type == pg.QUIT:
-            RUNNING = False
-            # break
-    # print(get_mouse_now())
-    ### update section of game loop (if updates take longer the 1/30th of a second, you will get laaaaag...)
-    def input(self):
-        keystate = pg.key.get_pressed()
-        if keystate[pg.K_ESCAPE]:
-            print ('this is working')
-            if event.key
-            PAUSED == True
-    if PAUSED != True:
-        all_sprites.update()
-        enemies.update()
-
-    # if player hits enemies
-    blocks_hit_list = pg.sprite.spritecollide(player, enemies, True)
-    if blocks_hit_list:
-        SCORE += 1
-
-    for block in blocks_hit_list:
-        print(block)
-        pass
-    
-    ### draw and render section of game loop
-    screen.fill(BLUE)
-    all_sprites.draw(screen)
-    draw_text("Score: " + str(SCORE), 22, WHITE, WIDTH/2, HEIGHT/10)
-
-    # double buffering draws frames for entire screen
-    pg.display.flip()
-    # pg.display.update() -> only updates a portion of the screen
-# ends program when loops evaluates to false
 pg.quit()

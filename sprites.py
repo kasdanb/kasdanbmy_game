@@ -1,20 +1,18 @@
 import pygame as pg
-
 from pygame.sprite import Sprite
-
 from settings import *
+from random import randint
+
 
 vec = pg.math.Vector2
-
-from random import randint
 
 # player class
 
 class Player(Sprite):
     def __init__(self, game):
         Sprite.__init__(self)
-        self.game = game 
         # these are the properties
+        self.game = game
         self.image = pg.Surface((50,50))
         self.image.fill(BLACK)
         self.rect = self.image.get_rect()
@@ -26,15 +24,29 @@ class Player(Sprite):
         self.canjump = False
     def input(self):
         keystate = pg.key.get_pressed()
-        if keystate[pg.K_w]:
-            self.acc.y = -PLAYER_ACC
+        # if keystate[pg.K_w]:
+        #     self.acc.y = -PLAYER_ACC
         if keystate[pg.K_a]:
             self.acc.x = -PLAYER_ACC
-        if keystate[pg.K_s]:
-            self.acc.y = PLAYER_ACC
+        # if keystate[pg.K_s]:
+        #     self.acc.y = PLAYER_ACC
         if keystate[pg.K_d]:
             self.acc.x = PLAYER_ACC
+        # if keystate[pg.K_p]:
+        #     if PAUSED == False:
+        #         PAUSED = True
+        #         print(PAUSED)
+        #     else:
+        #         PAUSED = False
+        #         print(PAUSED)
     # ...
+    def jump(self):
+        self.rect.x += 1
+        hits = pg.sprite.spritecollide(self, self.game.platforms, False)
+        self.rect.x -= 1
+        # if hits:
+        self.vel.y = -PLAYER_JUMP
+    
     def inbounds(self):
         if self.rect.x > WIDTH - 50:
             self.pos.x = WIDTH - 25
@@ -48,14 +60,19 @@ class Player(Sprite):
             print("i am off the bottom of the screen")
         if self.rect.y < 0:
             print("i am off the top of the screen...")
-
+    def mob_collide(self):
+            hits = pg.sprite.spritecollide(self, self.game.enemies, True)
+            if hits:
+                print("you collided with an enemy...")
+                self.game.score += 1
+                print(SCORE)
     def update(self):
-        self.inbounds()
-        self.acc = self.vel * PLAYER_FRICTION
+        self.acc = vec(0, PLAYER_GRAV)
+        self.acc.x = self.vel.x * PLAYER_FRICTION
         self.input()
         self.vel += self.acc
         self.pos += self.vel + 0.5 * self.acc
-        self.rect.center = self.pos
+        self.rect.midbottom = self.pos
 
 class Mob(Sprite):
     def __init__(self,width,height, color):
@@ -92,4 +109,17 @@ class Mob(Sprite):
         self.pos += self.vel
         self.rect.center = self.pos
 
+# create a new platform class...
 
+class Platform(Sprite):
+    def __init__(self, width, height, x, y, color, variant):
+        Sprite.__init__(self)
+        self.width = width
+        self.height = height
+        self.image = pg.Surface((self.width,self.height))
+        self.color = color
+        self.image.fill(self.color)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.variant = variant
