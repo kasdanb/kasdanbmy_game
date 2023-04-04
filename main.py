@@ -16,12 +16,17 @@ import os
 # import settings 
 from settings import *
 from sprites import *
+from os import path
 # from pg.sprite import Sprite
+
+
 
 # set up assets folders
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, "img")
 
+def load_data(self):
+    self.player_img = pg.image.load(path.join(img_folder, "yb.jpeg"))
 # create game class in order to pass properties to the sprites file
 
 class Game:
@@ -36,28 +41,46 @@ class Game:
         print(self.screen)
     def new(self):
         # starting a new game
+        self.load_data()
         self.score = 0
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.enemies = pg.sprite.Group()
         self.player = Player(self)
-        self.plat1 = Platform(WIDTH, 50, 0, HEIGHT-50, (150,150,150), "normal")
-        self.plat2 = Platform(50, 25, 200, 400, (150,150,150), "normal")
-        self.plat3 = Platform(175, 25, 350, 200, (150,150,150), "normal")
-        self.plat4 = Platform(325, 25, 100, 300, (150,150,150), "normal")
-        self.plat5 = Platform(500, 25, 225, 350, (150,150,150), "normal")
+        self.plat1 = Platform(WIDTH, 50, 0, HEIGHT-50, (255,255,0), "normal")
+        self.plat2 = Platform(50, 25, 200, 400, (255,255,0), "normal")
+        self.plat3 = Platform(50, 25, 350, 200, (255,255,0), "normal")
+        self.plat4 = Platform(50, 25, 100, 300, (255,255,0), "normal")
+        self.plat5 = Platform(50, 25, 500, 350, (255,255,0), "normal")
+        self.plat6 = Platform(50, 25, 600, 425, (255,255,0), "normal")
+        self.plat7 = Platform(50, 25, 650, 285, (255,255,0), "normal")
+        self.plat8 = Platform(50, 25, 650, 100, (255,255,0), "normal")
+        self.plat9 = Platform(50, 25, 50, 150, (255,255,0), "normal")
+        self.plat10 = Platform(50, 25, 400, 650, (255,255,0), "normal")
         # self.plat1 = Platform(WIDTH, 50, 0, HEIGHT-50, (150,150,150), "normal")
         self.all_sprites.add(self.plat1)
         self.all_sprites.add(self.plat2)
         self.all_sprites.add(self.plat3)
         self.all_sprites.add(self.plat4)
         self.all_sprites.add(self.plat5)
+        self.all_sprites.add(self.plat6)
+        self.all_sprites.add(self.plat7)
+        self.all_sprites.add(self.plat8)
+        self.all_sprites.add(self.plat9)
+        self.all_sprites.add(self.plat10)
+
 
         self.platforms.add(self.plat1)
         self.platforms.add(self.plat2)
         self.platforms.add(self.plat3)
         self.platforms.add(self.plat4)
         self.platforms.add(self.plat5)
+        self.platforms.add(self.plat6)
+        self.platforms.add(self.plat7)
+        self.platforms.add(self.plat8)
+        self.platforms.add(self.plat9)
+        self.platforms.add(self.plat10)
+
         
         self.all_sprites.add(self.player)
         for i in range(0,10):
@@ -101,7 +124,7 @@ class Game:
                     self.player.vel.y = 0
 
     def draw(self):
-        self.screen.fill(BLUE)
+        self.screen.fill(BLACK)
         self.all_sprites.draw(self.screen)
         # is this a method or a function?
         pg.display.flip()

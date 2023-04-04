@@ -3,6 +3,7 @@ from pygame.sprite import Sprite
 from settings import *
 from random import randint
 
+player.img = "yb.jpeg"
 
 vec = pg.math.Vector2
 
@@ -14,8 +15,8 @@ class Player(Sprite):
         # these are the properties
         self.game = game
         self.image = pg.Surface((50,50))
-        self.image.fill(BLACK)
-        self.rect = self.image.get_rect()
+        self.image = pg.transform.scale(game.player_img, (64, 64))
+        self.image.set_colorkey(WHITE)
         self.rect.center = (WIDTH/2, HEIGHT/2)
         self.pos = vec(WIDTH/2, HEIGHT/2)
         self.vel = vec(0,0)
