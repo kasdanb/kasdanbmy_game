@@ -1,6 +1,6 @@
 import pygame as pg
 from pygame.sprite import Sprite
-from settings_test import *
+from settings import *
 from random import randint
 from random import randrange
 
@@ -13,9 +13,8 @@ class Player(Sprite):
         Sprite.__init__(self)
         # these are the properties
         self.game = game
-        # add these lines for using an image with the player...
-        # if not rotating, change image_orig to just image...
-        self.image = pg.transform.scale(game.player_img, (64, 64))
+        self.image = pg.image.load('yb.jpeg').convert_alpha()
+        self.image = pg.transform.scale(self.image, (50, 50))
         # self.image_orig = pg.transform.scale(game.player_img, (64, 64))
         self.image.set_colorkey(WHITE)
         # self.image_orig.set_colorkey(WHITE)
