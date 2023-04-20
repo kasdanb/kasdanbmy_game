@@ -40,7 +40,7 @@ class Game:
     
     # to add images sounds etc copy below...and add this to the new method below...
     def load_data(self):
-        self.player_img = pg.image.load(path.join(img_folder, "bellar_man_single_frm.png")).convert()
+        self.player_img = pg.image.load(path.join(img_folder, "yb.jpeg")).convert()
 
     def new(self):
         # starting a new game
