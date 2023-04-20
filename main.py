@@ -38,7 +38,7 @@ class Game:
         self.win = False
         self.lose = False
     
-    # to add images sounds etc copy below...and add this to the new method below...
+    # gets the image from folder 
     def load_data(self):
         self.player_img = pg.image.load(path.join(img_folder, "yb.jpeg")).convert()
 
