@@ -14,7 +14,7 @@ class Player(Sprite):
         # these are the properties
         self.game = game
         self.image = pg.image.load('yb.jpeg').convert_alpha()
-        self.image = pg.transform.scale(self.image, (50, 50))
+        self.image = pg.transform.scale(self.image, (70, 70))
         # self.image_orig = pg.transform.scale(game.player_img, (64, 64))
         self.image.set_colorkey(WHITE)
         # self.image_orig.set_colorkey(WHITE)
