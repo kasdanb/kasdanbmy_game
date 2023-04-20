@@ -13,7 +13,7 @@ class Player(Sprite):
         Sprite.__init__(self)
         # these are the properties
         self.game = game
-        self.image = pg.image.load('yb.jpeg').convert_alpha()
+        self.image = pg.image.load('icespice.jpeg').convert_alpha()
         self.image = pg.transform.scale(self.image, (70, 70))
         # self.image_orig = pg.transform.scale(game.player_img, (64, 64))
         self.image.set_colorkey(WHITE)
@@ -113,9 +113,8 @@ class Mob(Sprite):
         self.game = game
         self.width = width
         self.height = height
-        self.image = pg.Surface((self.width,self.height))
-        self.color = color
-        self.image.fill(self.color)
+        self.image = pg.image.load('coin.jpeg').convert_alpha()
+        self.image = pg.transform.scale(self.image, (20, 20))
         self.rect = self.image.get_rect()
         # self.rect.center = (WIDTH/2, HEIGHT/2)
         self.pos = vec(randint(0,WIDTH), randint(0,HEIGHT))

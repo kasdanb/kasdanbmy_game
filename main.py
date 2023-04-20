@@ -1,3 +1,4 @@
+#file created by kasdan Blattman
 # import libs
 import pygame as pg
 import os
@@ -7,27 +8,19 @@ from sprites import *
 from math import *
 from math import ceil
 from os import path
+
+pg.init()
 # from pg.sprite import Sprite
 
 # set up assets folders
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, "images")
 
-class Cooldown():
-    def __init__(self):
-        self.current_time = 0
-        self.event_time = 0
-        self.delta = 0
-    def ticking(self):
-        self.current_time = floor((pg.time.get_ticks())/1000)
-        self.delta = self.current_time - self.event_time
-        # print(self.delta)
-    def timer(self):
-        self.current_time = floor((pg.time.get_ticks())/1000)
+
 
 class Game:
     def __init__(self):
-        # init game window etc.
+        # init game window 
         pg.init()
         pg.mixer.init()
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
@@ -40,7 +33,7 @@ class Game:
     
     # gets the image from folder 
     def load_data(self):
-        self.player_img = pg.image.load(path.join(img_folder, "yb.jpeg")).convert()
+        self.player_img = pg.image.load(path.join(img_folder, "icespice.jpeg")).convert()
 
     def new(self):
         # starting a new game
@@ -48,8 +41,6 @@ class Game:
 
         # added to load data
         self.load_data()
-
-        self.cd = Cooldown()
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
         self.plat_list = []
@@ -57,10 +48,6 @@ class Game:
         self.attached_items = pg.sprite.Group()
         self.player = Player(self)
         self.plat1 = Platform(WIDTH, 50, 0, HEIGHT-50, (150,150,150), "normal")
-        # self.coin1 = Coin(asdfasdf)
-        # self.all_sprites.add(coin1)
-        # self.coins.add(coin1)
-        # self.plat1 = Platform(WIDTH, 50, 0, HEIGHT-50, (150,150,150), "normal")
         self.all_sprites.add(self.player)
 
         self.all_sprites.add(self.plat1)
@@ -94,7 +81,6 @@ class Game:
             self.all_sprites.add(m)
             self.enemies.add(m)
         self.start_score = len(self.platforms)
-        self.cd.timer()
         self.run()
     def run(self):
         self.playing = True
@@ -115,20 +101,14 @@ class Game:
                     self.player.jump()
     def update(self):
         self.all_sprites.update()
-        self.cd.ticking()
-        # checking to see if timer has run out  
-        if self.cd.delta > 10:
-            pass
-            # print("you ran out of time and you lose!")
-        
+
         # check to see if we collide with enemyd
         mhits = pg.sprite.spritecollide(self.player, self.enemies, False)
         if mhits:
-            self.player.health -= 10
             mhits[0].attached_now = True
             self.enemies.remove(mhits[0])
             self.attached_items.add(mhits[0])
-            self.score -= 1
+            self.score += 1
         # if mhits:
         #     if self.player.vel.x < 0:
         #         self.player.pos.x += 5
@@ -158,13 +138,7 @@ class Game:
     def draw(self):
         self.screen.fill(BLUE)
         self.all_sprites.draw(self.screen)
-        self.draw_health_bar(self.screen, self.player.rect.x, self.player.rect.y, self.player.health)
-        self.draw_text(str(self.cd.delta), 24, WHITE, 50, 50)
-        if self.cd.delta > 10:
-            if self.score > 5:
-                self.draw_text("if you win...", 24, WHITE, WIDTH/2, 100)
-            else:
-                self.draw_text("you lose...", 24, WHITE, WIDTH/2, 100)
+
 
         if not self.win:
             # self.draw_text(str(self.player.rot), 24, WHITE, WIDTH/2, HEIGHT/2)
@@ -174,16 +148,6 @@ class Game:
 
         # is this a method or a function?
         pg.display.flip()
-    def draw_health_bar(self, surf, x, y, pct):
-        if pct < 0:
-            pct = 0
-        BAR_LENGTH = 100
-        BAR_HEIGHT = 10
-        fill = (pct / 100) * BAR_LENGTH
-        outline_rect = pg.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
-        fill_rect = pg.Rect(x, y, fill, BAR_HEIGHT)
-        pg.draw.rect(surf, GREEN, fill_rect)
-        pg.draw.rect(surf, WHITE, outline_rect, 2)
     def draw_text(self, text, size, color, x, y):
         font_name = pg.font.match_font('arial')
         font = pg.font.Font(font_name, size)
@@ -194,8 +158,29 @@ class Game:
     def get_mouse_now(self):
         x,y = pg.mouse.get_pos()
         return (x,y)
+    
+ # Define the screen width and height
+screen_width = 800
+screen_height = 600
 
-# instantiate the game class...
+screen = pg.display.set_mode((screen_width, screen_height))   
+screen_rect = screen.get_rect() 
+
+def render_message(text): 
+    m = font.render(text, True, RED)
+    m_rect = m.get_rect()
+    m_rect.top = screen_rect.bottom - (m_rect.bottom - m_rect.top)
+    return (m, m_rect)
+
+font = pg.font.SysFont(None,48)
+(message, message_rect) = render_message("Select rock paper or scissors!!!")
+
+
+pg.display.flip()
+
+
+
+# instantiate the game class
 g = Game()
 
 # kick off the game loop
@@ -203,5 +188,7 @@ while g.running:
     g.new()
 
 pg.quit()
+
+
 
 
