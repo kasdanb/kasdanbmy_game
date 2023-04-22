@@ -39,7 +39,7 @@ class Game:
         # starting a new game
         self.score = 0
 
-        # added to load data
+        # added to load data, sets all of the plats, sprites, and player onto pygame window
         self.load_data()
         self.all_sprites = pg.sprite.Group()
         self.platforms = pg.sprite.Group()
@@ -49,7 +49,6 @@ class Game:
         self.player = Player(self)
         self.plat1 = Platform(WIDTH, 50, 0, HEIGHT-50, (150,150,150), "normal")
         self.all_sprites.add(self.player)
-
         self.all_sprites.add(self.plat1)
         self.platforms.add(self.plat1)
         
@@ -59,6 +58,7 @@ class Game:
             self.all_sprites.add(p)
             self.platforms.add(p)
         for i in range(0,15):
+            # puts plats on random places on window, making a new random "map" every time
             p = Platform(randint(0,WIDTH-50), randint(0,HEIGHT-50), 100, 25, BLACK, "normal")
             self.all_sprites.add(p)
             self.platforms.add(p)
@@ -77,6 +77,8 @@ class Game:
                 self.plat_list.append(p)
             
         for i in range(0,10):
+            # if player gets close enough to get coins, the coin will get collected
+            #also creates mobs and puts them in random places on map
             m = Mob(self, 20,20,(0,255,0))
             self.all_sprites.add(m)
             self.enemies.add(m)
@@ -91,6 +93,7 @@ class Game:
             self.draw()
     
     def events(self):
+        # jump command for player
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 if self.playing:
@@ -105,17 +108,11 @@ class Game:
         # check to see if we collide with enemyd
         mhits = pg.sprite.spritecollide(self.player, self.enemies, False)
         if mhits:
+            # adds score to scoreboard when player collects coins
             mhits[0].attached_now = True
             self.enemies.remove(mhits[0])
             self.attached_items.add(mhits[0])
             self.score += 1
-        # if mhits:
-        #     if self.player.vel.x < 0:
-        #         self.player.pos.x += 5
-        #     if self.player.vel.x > 0:
-        #         self.player.pos.x -= 5
-        #     if self.player.vel.y > 0:
-        #         self.player.pos.y -= 5
             
         if self.player.vel.y > 0:
             hits = pg.sprite.spritecollide(self.player, self.platforms, False)
@@ -146,7 +143,7 @@ class Game:
         else:
             self.draw_text("You win!", 24, WHITE, WIDTH/2, HEIGHT/2)
 
-        # is this a method or a function?
+        #displays score in the middle of the screen
         pg.display.flip()
     def draw_text(self, text, size, color, x, y):
         font_name = pg.font.match_font('arial')
@@ -163,6 +160,8 @@ class Game:
 screen_width = 800
 screen_height = 600
 
+# lines 163-174 I was trying to display the objective of the game on the screen
+# Copied chunk from RPS code, but was not working
 screen = pg.display.set_mode((screen_width, screen_height))   
 screen_rect = screen.get_rect() 
 
@@ -173,7 +172,7 @@ def render_message(text):
     return (m, m_rect)
 
 font = pg.font.SysFont(None,48)
-(message, message_rect) = render_message("Select rock paper or scissors!!!")
+(message, message_rect) = render_message("Collect the Coins to Win")
 
 
 pg.display.flip()
@@ -188,6 +187,10 @@ while g.running:
     g.new()
 
 pg.quit()
+
+
+
+
 
 
 

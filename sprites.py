@@ -13,13 +13,12 @@ class Player(Sprite):
         Sprite.__init__(self)
         # these are the properties
         self.game = game
+        #Along with self_load, this changes the main sprite to an image
         self.image = pg.image.load('icespice.jpeg').convert_alpha()
         self.image = pg.transform.scale(self.image, (70, 70))
         # self.image_orig = pg.transform.scale(game.player_img, (64, 64))
         self.image.set_colorkey(WHITE)
-        # self.image_orig.set_colorkey(WHITE)
-        # ignore these lines - just for rotating...
-        # self.image = self.image_orig.copy()
+# All the movement rules for the main sprite + size and appearance
         self.rect = self.image.get_rect()
         self.radius = int(self.rect.width * .85 / 2)
         self.pos = vec(0, 0)
@@ -34,36 +33,17 @@ class Player(Sprite):
         self.health = 100
 
     def input(self):
+        #more movement rules for the player, allows player to go side to side at certain speed
         keystate = pg.key.get_pressed()
-        # if keystate[pg.K_w]:
-        #     self.acc.y = -PLAYER_ACC
         if keystate[self.left_key]:
             self.acc.x = -PLAYER_ACC
             self.rot_speed = 8
-        # if keystate[pg.K_s]:
-        #     self.acc.y = PLAYER_ACC
         if keystate[pg.K_d]:
             self.acc.x = PLAYER_ACC
             self.rot_speed = -8
-        # if keystate[pg.K_p]:
-        #     if PAUSED == False:
-        #         PAUSED = True
-        #         print(PAUSED)
-        #     else:
-        #         PAUSED = False
-        #         print(PAUSED)
-    # ...
-    def rotate(self):
-        now = pg.time.get_ticks()
-        if now - self.last_update > 30:
-            self.last_update = now
-            self.rot = (self.rot + self.rot_speed) % 360
-            new_image = pg.transform.rotate(self.image_orig, self.rot)
-            old_center = self.rect.center
-            self.image = new_image
-            self.rect = self.image.get_rect()
-            self.rect.center = old_center
+    
     def jump(self):
+        #Allows player to jump with space bar
         self.rect.x += 1
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         self.rect.x -= 1
@@ -71,6 +51,8 @@ class Player(Sprite):
             self.vel.y = -PLAYER_JUMP
     
     def inbounds(self):
+        # Allows player to go to the other side of the screen when they fall off the other side, like pacman
+        # All print lines are shown in terminal but not in window
         if self.rect.x > WIDTH - 50:
             self.pos.x = WIDTH - 25
             self.vel.x = 0
@@ -83,12 +65,16 @@ class Player(Sprite):
             print("i am off the bottom of the screen")
         if self.rect.y < 0:
             print("i am off the top of the screen...")
+
     def mob_collide(self):
+            #adds point to score when main sprite collects coins
             hits = pg.sprite.spritecollide(self, self.game.enemies, True)
             if hits:
                 print("you collided with an enemy...")
                 self.game.score += 1
+
     def update(self):
+        # This chunk allows player movement and the speed that the main sprite is able to move at 
         self.rot_speed = 0
         if self.rot > 312 or self.rot < 56:
             self.canjump = True
@@ -110,20 +96,22 @@ class Player(Sprite):
 class Mob(Sprite):
     def __init__(self, game, width,height, color):
         Sprite.__init__(self)
+        #creating dimensions of mob sprites
         self.game = game
         self.width = width
         self.height = height
+        #changing "mob" sprites to image of coins
         self.image = pg.image.load('coin.jpeg').convert_alpha()
         self.image = pg.transform.scale(self.image, (20, 20))
         self.rect = self.image.get_rect()
-        # self.rect.center = (WIDTH/2, HEIGHT/2)
+        #positions the coins at random points around the window, also more movement rules for the coins
         self.pos = vec(randint(0,WIDTH), randint(0,HEIGHT))
         self.vel = vec(0,0)
         self.acc = vec(1,1)
         self.cofric = 0.01
         self.attached_now = False
 
-    # ...
+    # Jumping rules for main sprite
     def jump(self):
         hits = pg.sprite.spritecollide(self, self.game.platforms, False)
         if hits:
@@ -134,19 +122,7 @@ class Mob(Sprite):
                 self.vel.y = 0
         else:
             self.vel.x = 0
-    def inbounds(self):
-        if self.rect.x > WIDTH:
-            self.vel.x *= -1
-            # self.acc = self.vel * -self.cofric
-        if self.rect.x < 0:
-            self.vel.x *= -1
-            # self.acc = self.vel * -self.cofric
-        if self.rect.y < 0:
-            self.vel.y *= -1
-            # self.acc = self.vel * -self.cofric
-        if self.rect.y > HEIGHT:
-            self.vel.y *= -1
-            # self.acc = self.vel * -self.cofric
+    #attaches the coins to the player after the player collects them from 126-138
     def attached(self, obj):
         if self.attached_now:
             self.pos = obj.pos - vec(0,16) + vec(randint(-64,64), randint(-64,64))
@@ -162,7 +138,7 @@ class Mob(Sprite):
         self.rect.midbottom = self.pos
 
 # create a new platform class...
-
+# Displays them on the screen and gives them color and size
 class Platform(Sprite):
     def __init__(self, x, y, width, height, color, variant):
         Sprite.__init__(self)

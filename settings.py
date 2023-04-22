@@ -16,7 +16,8 @@ RUNNING = True
 SCORE = 0
 PAUSED = False
 
-# Starting platforms
+# Platform rules, size, and color
+#Green ones are bouncy, red ones disappear when you touch them, black and gray ones are normal
 PLATFORM_LIST = [(0, HEIGHT - 40, WIDTH, 40, (200,200,200), "normal"),
                  (WIDTH / 2 - 50, HEIGHT * 3 / 4, 100, 20, (100,255,100), "bouncey"),
                  (125, HEIGHT - 350, 100, 5, (200,100,50), "disappearing"),
